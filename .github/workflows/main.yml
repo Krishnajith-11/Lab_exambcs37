@@ -11,7 +11,7 @@ jobs:
 
     steps:
 
-      # Step 1: Checkout code
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -23,33 +23,40 @@ jobs:
       - name: Train model
         run: python train.py
 
-      # Step 4: Extract MSE
+      # Step 4: Student Identity (IMPORTANT FOR EXAM)
+      - name: Student Identity
+        run: echo "Name: YOUR_NAME | Roll No: YOUR_ROLL_NUMBER"
+
+      # Step 5: Extract MSE
       - name: Extract MSE
         run: |
           MSE=$(python -c "import json;print(json.load(open('metrics.json'))['mse'])")
           echo "MSE=$MSE" >> $GITHUB_ENV
 
-      # Step 5: Compare with BEST_MSE
+      # Step 6: Compare Performance (FIXED VERSION)
       - name: Compare performance
         run: |
-          if (( $(echo "$MSE < $BEST_MSE" | bc -l) )); then
+          echo "MSE is $MSE"
+          echo "BEST_MSE is $BEST_MSE"
+
+          if [ "$(echo "$MSE < $BEST_MSE" | awk '{print ($1 < $3)}')" = "1" ]; then
             echo "DEPLOY=true" >> $GITHUB_ENV
           else
             echo "DEPLOY=false" >> $GITHUB_ENV
           fi
 
-      # Step 6: Build Docker Image (Conditional)
+      # Step 7: Build Docker Image (Conditional)
       - name: Build Docker Image
         if: env.DEPLOY == 'true'
         run: docker build -t mymodel .
 
-      # Step 7: Login to DockerHub
+      # Step 8: Login to DockerHub
       - name: Login to DockerHub
         if: env.DEPLOY == 'true'
         run: |
           echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
 
-      # Step 8: Push Docker Image
+      # Step 9: Push Docker Image
       - name: Push Docker Image
         if: env.DEPLOY == 'true'
         run: |
