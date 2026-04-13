@@ -39,3 +39,4 @@ joblib.dump(model, "model.pkl")
 # Save metrics
 with open("metrics.json", "w") as f:
     json.dump({"mse": mse}, f)
+print("Name: Krishnajith | Roll No: 2022BCS0037")
