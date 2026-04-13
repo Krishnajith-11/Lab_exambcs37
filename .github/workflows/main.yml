@@ -25,7 +25,7 @@ jobs:
 
       # Step 4: Student Identity (IMPORTANT FOR EXAM)
       - name: Student Identity
-        run: echo "Name: YOUR_NAME | Roll No: YOUR_ROLL_NUMBER"
+        run: echo "Name: Krishnajith | Roll No: 2022BCS0037"
 
       # Step 5: Extract MSE
       - name: Extract MSE
