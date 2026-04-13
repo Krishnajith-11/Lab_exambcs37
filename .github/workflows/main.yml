@@ -23,9 +23,10 @@ jobs:
       - name: Train model
         run: python train.py
 
-      # Step 4: Student Identity (IMPORTANT FOR EXAM)
+      # Step 4: Student Identity (FIXED YAML)
       - name: Student Identity
-        run: echo "Name: Krishnajith | Roll No: 2022BCS0037"
+        run: |
+          echo "Name: Krishnajith | Roll No: 2022BCS0037"
 
       # Step 5: Extract MSE
       - name: Extract MSE
@@ -33,7 +34,7 @@ jobs:
           MSE=$(python -c "import json;print(json.load(open('metrics.json'))['mse'])")
           echo "MSE=$MSE" >> $GITHUB_ENV
 
-      # Step 6: Compare Performance (FIXED VERSION)
+      # Step 6: Compare Performance (FIXED)
       - name: Compare performance
         run: |
           echo "MSE is $MSE"
