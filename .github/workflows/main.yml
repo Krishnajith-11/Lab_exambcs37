@@ -59,7 +59,7 @@ jobs:
       - name: Login to DockerHub
         if: env.DEPLOY == 'true'
         run: |
-          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
       # Step 9: Push Docker Image
       - name: Push Docker Image
