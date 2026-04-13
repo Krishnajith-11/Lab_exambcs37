@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # Inject GitHub Secret
+    env:
+      BEST_MSE: ${{ secrets.BEST_MSE }}
+
     steps:
 
       # Step 1: Checkout repository
@@ -23,7 +27,7 @@ jobs:
       - name: Train model
         run: python train.py
 
-      # Step 4: Student Identity (FIXED YAML)
+      # Step 4: Student Identity
       - name: Student Identity
         run: |
           echo "Name: Krishnajith | Roll No: 2022BCS0037"
@@ -34,7 +38,7 @@ jobs:
           MSE=$(python -c "import json;print(json.load(open('metrics.json'))['mse'])")
           echo "MSE=$MSE" >> $GITHUB_ENV
 
-      # Step 6: Compare Performance (FIXED)
+      # Step 6: Compare Performance (Fixed)
       - name: Compare performance
         run: |
           echo "MSE is $MSE"
