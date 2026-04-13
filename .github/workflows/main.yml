@@ -12,6 +12,8 @@ jobs:
     # Inject GitHub Secret
     env:
       BEST_MSE: ${{ secrets.BEST_MSE }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
     steps:
 
