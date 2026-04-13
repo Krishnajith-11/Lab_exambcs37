@@ -1,0 +1,57 @@
+name: ML CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Step 3: Train model
+      - name: Train model
+        run: python train.py
+
+      # Step 4: Extract MSE
+      - name: Extract MSE
+        run: |
+          MSE=$(python -c "import json;print(json.load(open('metrics.json'))['mse'])")
+          echo "MSE=$MSE" >> $GITHUB_ENV
+
+      # Step 5: Compare with BEST_MSE
+      - name: Compare performance
+        run: |
+          if (( $(echo "$MSE < $BEST_MSE" | bc -l) )); then
+            echo "DEPLOY=true" >> $GITHUB_ENV
+          else
+            echo "DEPLOY=false" >> $GITHUB_ENV
+          fi
+
+      # Step 6: Build Docker Image (Conditional)
+      - name: Build Docker Image
+        if: env.DEPLOY == 'true'
+        run: docker build -t mymodel .
+
+      # Step 7: Login to DockerHub
+      - name: Login to DockerHub
+        if: env.DEPLOY == 'true'
+        run: |
+          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+
+      # Step 8: Push Docker Image
+      - name: Push Docker Image
+        if: env.DEPLOY == 'true'
+        run: |
+          docker tag mymodel $DOCKERHUB_USERNAME/mymodel:latest
+          docker push $DOCKERHUB_USERNAME/mymodel:latest
